@@ -10,20 +10,30 @@ const newUsername = document.getElementById('newUsername');
 export function addNewEntry() {
   if (newQuestion.value !== '' && newResponse.value !== '') {
     const newEntry = {site: newQuestion.value, userName: newUsername.value, psw: newResponse.value}
-
-    // pswFiles
-    db.collection("pswFiles").doc().set({
-      site: newQuestion.value,
-      userName: newUsername.value,
-      psw: newResponse.value
+    // sign in
+    firebase.auth().signInAnonymously().catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      console.log('logging: ', errorCode, errorMessage);
+    // ...
     });
-    newQuestion.value = '';
-    newResponse.value = '';
-    infoScreen.innerHTML = 'new psw added, refresh browser to see it.';
-    window.scrollTo(0, 0);
-    setTimeout(() => {
-    	infoScreen.innerHTML = "";
-    }, 9000);
+    firebase.auth().onAuthStateChanged(function(user) {
+      console.log('auth change: ', user);
+      // pswFiles
+      db.collection("pswFiles").doc().set({
+        site: newQuestion.value,
+        userName: newUsername.value,
+        psw: newResponse.value
+      });
+      newQuestion.value = '';
+      newResponse.value = '';
+      infoScreen.innerHTML = 'new psw added, refresh browser to see it.';
+      window.scrollTo(0, 0);
+      setTimeout(() => {
+      	infoScreen.innerHTML = "";
+      }, 9000);
+    });
 
     /* SENDS TO SERVER FOR MONGODB; DISABLED AS I WANT TO USE FIRESTORE
     const newEntry = {site: newQuestion.value, userName: newUsername.value, psw: newResponse.value}

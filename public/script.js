@@ -28,7 +28,7 @@ function showData(clickedElement) {
     if (dataEntry.id === clickedElement.target.id) {
       // add data
       const correctEntry = allData[idx];
-      console.log('de ', allData[idx]);
+      //console.log('de ', allData[idx]);
       downRight.innerHTML = `${correctEntry.site}<br> <div id= "userNameHere">${correctEntry.userName}</div>
       <input type= "button" value= "copy username" id= "cUn">
       <br><div id= "pswSpace" class= "silverText">${correctEntry.psw}</div>`;
@@ -81,47 +81,80 @@ function checkPass(pass) {
         infoScreen.innerHTML = 'database ready!'
         //console.log('allData', allData);
       });
+      // FOR OPERATION DATAMOVE:
+      // NODE VERSION DISABLED FOR NOW AS I WANT TO USE FIRESTORE
+      /*
+      const passu = pass.target.value;
+      const http = new XMLHttpRequest();
+      const url = '/showAll';
+      let params = 'MSG=' + passu;
+      http.open('POST', url, true);
+      http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      //console.log('starting xhtml');
+      http.onreadystatechange = () => {
+        if (http.readyState == 4 && http.status == 200) {
+          const records = JSON.parse(http.responseText);
+          //const records = http.responseText;
+          console.log('got records', records);
+          console.log('all data now: ', allData);
+          if (records === 'wrong password') {
+            infoScreen.innerHTML = 'wrong password!';
+            console.log('wrong pw');
+          } else {
+            // correct pw
+            //infoScreen.innerHTML = '';
+            //passAsker.classList.add('invis');
+            //allDivs.classList.remove('invis');
+            const newData = records;
+            // okey now gotta set records there;
+            newData.forEach((item, i) => {
+              let dublicated = false;
+              allData.forEach((ite, ii) => {
+                if (item.site === ite.site) {
+                  dublicated = true;
+                  console.log('dublicated', item.site);
+                }
+              });
+              // make db entry
+              if (dublicated === false) {
+                db.collection("pswFiles").doc().set({
+                  site: item.site,
+                  userName: item.userName,
+                  psw: item.psw
+                });
+              }
+            });
+            */ // ENDS OPERATION DATAMOVE
+            /*
+            db.collection("pswFiles").doc().set({
+              site: newQuestion.value,
+              userName: newUsername.value,
+              psw: newResponse.value
+            });
+            //console.log('newData, ', newData);
+          }
+        }
+      }
+      http.send(params);
+      */
+      // OPERATION DATAMOVE ENDS
     } else {
       infoScreen.innerHTML = 'wrong password!';
       //console.log('xxx', pass.target.value, psws);
     };
 
-    /* NODE VERSION DISABLED FOR NOW AS I WANT TO USE FIRESTORE
-    const passu = pass.target.value;
-    const http = new XMLHttpRequest();
-    const url = '/showAll';
-    let params = 'MSG=' + passu;
-    http.open('POST', url, true);
-    http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    http.onreadystatechange = () => {
-      if (http.readyState == 4 && http.status == 200) {
-        const records = JSON.parse(http.responseText);
-        //console.log('got records', records);
-        if (records === 'wrong password') {
-          infoScreen.innerHTML = 'wrong password!';
-        } else {
-          // correct pw
-          infoScreen.innerHTML = '';
-          passAsker.classList.add('invis');
-          allDivs.classList.remove('invis');
-          allData = records;
-          allData.forEach( data => {
-            //data.question
-            // add question to page
-            downLeft.innerHTML += `<p id= ${data._id} class= "clickable">${data.site}</p>`;
-            // add event listener to this
-            const elements = document.getElementsByClassName('clickable');
-            for (var i = 0; i < elements.length; i++) {
-              elements[i].addEventListener('click', showData, false);
-            }
-          });
-        }
-      }
-    }
-    http.send(params);
-    */
+
+
 }
 window.onload = (()=> {
   const allDivs = document.getElementById('container');
   allDivs.classList.add('invis');
+  /*
+  firebase.auth().signInAnonymously().catch(function(error) {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    // ...
+  });
+  */
 });
