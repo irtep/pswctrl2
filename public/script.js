@@ -50,36 +50,45 @@ function checkPass(pass) {
       allDivs.classList.remove('invis');
       infoScreen.innerHTML = 'odota, että dataBase on valmis...';
       // make db search and add the data
-      db.collection("pswFiles").get().then((querySnapshot) => {
-        /*
-        allData.forEach( data => {
-          //data.question
-          // add question to page
-          downLeft.innerHTML += `<p id= ${data._id} class= "clickable">${data.site}</p>`;
-          // add event listener to this
-          const elements = document.getElementsByClassName('clickable');
-          for (var i = 0; i < elements.length; i++) {
+      firebase.auth().signInAnonymously().catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log('logging: ', errorCode, errorMessage);
+      // ...
+      });
+      firebase.auth().onAuthStateChanged(function(user) { 
+        db.collection("pswFiles").get().then((querySnapshot) => {
+          /*
+          allData.forEach( data => {
+            //data.question
+            // add question to page
+            downLeft.innerHTML += `<p id= ${data._id} class= "clickable">${data.site}</p>`;
+            // add event listener to this
+            const elements = document.getElementsByClassName('clickable');
+            for (var i = 0; i < elements.length; i++) {
+              elements[i].addEventListener('click', showData, false);
+            }
+          });
+          */
+          querySnapshot.forEach((doc) => {
+            //console.log(`${doc.id} => ${doc.data().site} => ${doc.data().userName}`);
+            // add entry to allData
+            // {site: newQuestion.value, userName: newUsername.value, psw: newResponse.value}
+            const newEntry = {id: doc.id, userName: doc.data().userName, psw: doc.data().psw, site: doc.data().site};
+            allData.push(newEntry);
+            //console.log('allData: ', allData);
+            // add question to page
+            downLeft.innerHTML += `<p id= ${doc.id} class= "clickable">${doc.data().site}</p>`;
+            // add event listener to this
+           const elements = document.getElementsByClassName('clickable');
+           for (var i = 0; i < elements.length; i++) {
             elements[i].addEventListener('click', showData, false);
-          }
+           }
+          });
+          infoScreen.innerHTML = 'database ready!'
+          //console.log('allData', allData);
         });
-        */
-        querySnapshot.forEach((doc) => {
-          //console.log(`${doc.id} => ${doc.data().site} => ${doc.data().userName}`);
-          // add entry to allData
-          // {site: newQuestion.value, userName: newUsername.value, psw: newResponse.value}
-          const newEntry = {id: doc.id, userName: doc.data().userName, psw: doc.data().psw, site: doc.data().site};
-          allData.push(newEntry);
-          //console.log('allData: ', allData);
-          // add question to page
-          downLeft.innerHTML += `<p id= ${doc.id} class= "clickable">${doc.data().site}</p>`;
-          // add event listener to this
-         const elements = document.getElementsByClassName('clickable');
-         for (var i = 0; i < elements.length; i++) {
-          elements[i].addEventListener('click', showData, false);
-         }
-        });
-        infoScreen.innerHTML = 'database ready!'
-        //console.log('allData', allData);
       });
       // FOR OPERATION DATAMOVE:
       // NODE VERSION DISABLED FOR NOW AS I WANT TO USE FIRESTORE
